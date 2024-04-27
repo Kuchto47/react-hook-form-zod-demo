@@ -1,5 +1,5 @@
 import './App.css'
-import {CreateClientCard} from "./clientCreation/components/CreateClientCard.tsx";
+import {CreateClientCard} from "./clientCreation/components/CreateClientCard/CreateClientCard.tsx";
 
 function App() {
 
