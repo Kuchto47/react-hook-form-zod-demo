@@ -1,35 +1,35 @@
-import { Button, FormControl, Input, Select, Textarea, FormLabel } from "@chakra-ui/react";
+import { Button, FormControl, Input, Textarea, FormLabel, Select } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Month } from "../../types";
 import './CreateClientCard.css'
-
-type FormFields = {
-    month: Month;
-    name: string;
-    description: string;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InputNumber } from "../../../common/components/InputNumber";
+import { FormFields, CreateClientSchema } from "../../schemas/createClientSchema";
+import { months } from "../../constants";
 
 export const CreateClientCard = () => {
     const {
+        control,
         register,
         handleSubmit,
         setError,
+        reset,
         formState: { errors, isSubmitting }
     } = useForm<FormFields>({
         defaultValues: {
-            description: "Default description"
+            description: "Default description, lets say DB-stored value",
+            month: '1'
         },
-    })
+        resolver: zodResolver(CreateClientSchema)
+    });
 
     const onSubmit: SubmitHandler<FormFields> = async (values: FormFields): Promise<void> => {
         try {
             await new Promise((resolve) => setTimeout(resolve, 1500))
             //throw new Error();
-            console.log('Values:', JSON.stringify(values, null, 4))
+            console.log('Values:', values)
         } catch (err) {
-            // eg. Backend reponse error
             setError("root", {
-                message: "Something went wrong"
+                message: "Something went wrong eg. in the backend"
             })
         }
     }
@@ -43,26 +43,34 @@ export const CreateClientCard = () => {
             }}
         >
             <FormControl isInvalid={!!errors.root}>
-                <h4>Create Client</h4>
+                <h1>Create Client</h1>
 
                 <FormLabel htmlFor="month">Month</FormLabel>
-                <Select {...register("month")} id='month'/>
+                <Select {...register("month")} id='month'>
+                    {months.map((month, index) => (
+                        <option key={index} value={month[0]}>
+                            {month[1]}
+                        </option>
+                    ))}
+                </Select>
+
+                <FormLabel htmlFor="gwp">GWP</FormLabel>
+                <InputNumber
+                    name="gwp"
+                    placeholder="0"
+                    control={control}
+                />
+                {errors.gwp && <div style={{color: 'red'}}>{errors.gwp.message}</div>}
 
                 <FormLabel htmlFor="name">Name</FormLabel>
-                <Input {...register("name", { required: "Name is required" })} id='name'/>
+                <Input {...register("name")} id='name'/>
                 {errors.name && <div style={{color: 'red'}}>{errors.name.message}</div>}
-                
+
                 <FormLabel htmlFor="description">Description</FormLabel>
-                <Textarea {...register("description", {
-                    maxLength: {
-                        value: 120,
-                        message: "Description must not be longer than 120 characters"
-                    },
-                })} id='description'/>
+                <Textarea {...register("description")} id='description'/>
                 {errors.description && <div style={{color: 'red'}}>{errors.description.message}</div>}
             </FormControl>
-            {/*cancel button if preview*/}
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline' onClick={() => reset()}>Reset</Button>
             <Button
                 variant='solid'
                 disabled={isSubmitting}
