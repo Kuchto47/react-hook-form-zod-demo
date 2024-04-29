@@ -7,7 +7,7 @@ import { Form } from "../../../form/components/Form.tsx";
 export const CreateClientCard = () => {
     const onSubmit = async (values: FormFields): Promise<void> => {
         await new Promise((resolve) => setTimeout(resolve, 1500))
-        //throw new Error();
+        //throw new Error(); // simulate error response from BE
         console.log('Values:', {...values, gwp: Number(values.gwp)})
     }
 
