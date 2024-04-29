@@ -8,7 +8,7 @@ type InputNumberProps<TFormValues extends Record<string, unknown>> = {
 } & CommonFormProps<TFormValues>;
 
 export const FormDollarFormattedNumberInput = <TFormValues extends Record<string, unknown>>(props: InputNumberProps<TFormValues>) => {
-    const { control } = useFormContext<TFormValues>();
+    const { control, formState: { errors } } = useFormContext<TFormValues>();
     return (
         <>
             <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
@@ -33,7 +33,7 @@ export const FormDollarFormattedNumberInput = <TFormValues extends Record<string
                     </InputGroup>
                 )}
             />
-            {props.errorMessage && <div style={{color: 'red'}}>{props.errorMessage}</div>}
+            {errors[props.fieldName] && <div style={{color: 'red'}}>{`${errors[props.fieldName]?.message}`}</div>}
         </>
     )
 }

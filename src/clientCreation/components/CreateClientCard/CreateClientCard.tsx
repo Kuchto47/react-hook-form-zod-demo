@@ -1,75 +1,33 @@
-import { Button, FormControl } from "@chakra-ui/react";
-import {FormProvider, SubmitHandler, useForm} from "react-hook-form";
 import './CreateClientCard.css'
-import { zodResolver } from "@hookform/resolvers/zod";
 import { FormFields, CreateClientSchema } from "../../schemas/createClientSchema";
 import { months } from "../../constants";
 import { FormSelect, FormInput, FormTextArea, FormDollarFormattedNumberInput } from "../../../form/components";
+import { Form } from "../../../form/components/Form.tsx";
 
 export const CreateClientCard = () => {
-    const form = useForm<FormFields>({
-        defaultValues: {
-            description: "Default description, lets say DB-stored value",
-            month: '1'
-        },
-        resolver: zodResolver(CreateClientSchema)
-    });
-    const {
-        handleSubmit,
-        setError,
-        reset,
-        formState: { errors, isSubmitting }
-    } = form;
-
-    const onSubmit: SubmitHandler<FormFields> = async (values: FormFields): Promise<void> => {
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
-            //throw new Error();
-            console.log('Values:', {...values, gwp: Number(values.gwp)})
-        } catch (err) {
-            setError("root", {
-                message: "Something went wrong eg. in the backend"
-            })
-        }
+    const onSubmit = async (values: FormFields): Promise<void> => {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        //throw new Error();
+        console.log('Values:', {...values, gwp: Number(values.gwp)})
     }
 
     return (
-        <FormProvider {...form}>
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                style={{
-                    minWidth: '780px',
-                    margin: '50px'
-                }}
-            >
-                <FormControl isInvalid={!!errors.root}>
-                    <h1>Create Client</h1>
-                    <FormSelect<FormFields>
-                        fieldName='month' label='Month' options={months} id='month' errorMessage={errors.month?.message}
-                    />
-                    <FormDollarFormattedNumberInput<FormFields>
-                        fieldName='gwp' label='GWP' id='gwp' errorMessage={errors.gwp?.message} placeholder='0'
-                    />
-                    <FormInput<FormFields> fieldName='name' id='name' errorMessage={errors.name?.message} label='Name'/>
-                    <FormTextArea<FormFields>
-                        fieldName='description'
-                        label='Description'
-                        id='description'
-                        errorMessage={errors.description?.message}
-                    />
-                </FormControl>
-                <Button variant='outline' onClick={() => reset()}>Reset</Button>
-                <Button
-                    variant='solid'
-                    disabled={isSubmitting}
-                    isLoading={isSubmitting}
-                    type='submit'
-                >
-                    Submit
-                </Button>
-                {errors.root && <div style={{color: 'red'}}>{errors.root.message}</div>}
-            </form>
-        </FormProvider>
+        <Form
+            zodSchema={CreateClientSchema}
+            onSubmit={onSubmit}
+            defaultValues={{
+                description: "Default description, lets say DB-stored value",
+                month: '1'
+            }}
+            submitText='Submit'
+            cancelText='Reset'
+        >
+            <h1>Create Client</h1>
+            <FormSelect<FormFields> fieldName='month' label='Month' options={months} id='month' />
+            <FormDollarFormattedNumberInput<FormFields> fieldName='gwp' label='GWP' id='gwp' placeholder='0' />
+            <FormInput<FormFields> fieldName='name' id='name' label='Name'/>
+            <FormTextArea<FormFields> fieldName='description' label='Description' id='description' />
+        </Form>
     )
 }
 
