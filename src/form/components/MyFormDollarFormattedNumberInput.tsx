@@ -22,7 +22,7 @@ export const MyFormDollarFormattedNumberInput = <TFormValues extends Record<stri
                         />
                         <Input
                             {...field}
-                            placeholder={props.placeholder}
+                            placeholder={props.placeholder ?? '0'}
                             id={props.id}
                             value={formatNumber(field.value as NumberToFormat)}
                             onChange={(event: ChangeEvent<HTMLInputElement>) => {

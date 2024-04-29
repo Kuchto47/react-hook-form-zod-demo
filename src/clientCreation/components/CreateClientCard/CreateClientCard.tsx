@@ -29,7 +29,7 @@ export const CreateClientCard = () => {
         >
             <h1>Create Client</h1>
             <MyFormSelect<FormFields> fieldName='month' label='Month' options={months} id='month' />
-            <MyFormDollarFormattedNumberInput<FormFields> fieldName='gwp' label='GWP' id='gwp' placeholder='0' />
+            <MyFormDollarFormattedNumberInput<FormFields> fieldName='gwp' label='GWP' id='gwp' />
             <MyFormInput<FormFields> fieldName='name' id='name' label='Name'/>
             <MyFormTextArea<FormFields> fieldName='description' label='Description' id='description' />
         </MyForm>
