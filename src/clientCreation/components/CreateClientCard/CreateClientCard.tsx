@@ -1,32 +1,32 @@
-import { Button, FormControl, Input, Textarea, FormLabel, Select } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Button, FormControl } from "@chakra-ui/react";
+import {FormProvider, SubmitHandler, useForm} from "react-hook-form";
 import './CreateClientCard.css'
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputNumber } from "../../../common/components/InputNumber";
+import { FormDollarFormattedNumberInput } from "../../../common/components/FormDollarFormattedNumberInput.tsx";
 import { FormFields, CreateClientSchema } from "../../schemas/createClientSchema";
 import { months } from "../../constants";
+import { FormSelect, FormInput, FormTextArea } from "../../../form/components";
 
 export const CreateClientCard = () => {
-    const {
-        control,
-        register,
-        handleSubmit,
-        setError,
-        reset,
-        formState: { errors, isSubmitting }
-    } = useForm<FormFields>({
+    const form = useForm<FormFields>({
         defaultValues: {
             description: "Default description, lets say DB-stored value",
             month: '1'
         },
         resolver: zodResolver(CreateClientSchema)
     });
+    const {
+        handleSubmit,
+        setError,
+        reset,
+        formState: { errors, isSubmitting }
+    } = form;
 
     const onSubmit: SubmitHandler<FormFields> = async (values: FormFields): Promise<void> => {
         try {
             await new Promise((resolve) => setTimeout(resolve, 1500))
             //throw new Error();
-            console.log('Values:', values)
+            console.log('Values:', {...values, gwp: Number(values.gwp)})
         } catch (err) {
             setError("root", {
                 message: "Something went wrong eg. in the backend"
@@ -35,52 +35,42 @@ export const CreateClientCard = () => {
     }
 
     return (
-        <form
-            onSubmit={handleSubmit(onSubmit)}
-            style={{
-                minWidth: '780px',
-                margin: '50px'
-            }}
-        >
-            <FormControl isInvalid={!!errors.root}>
-                <h1>Create Client</h1>
-
-                <FormLabel htmlFor="month">Month</FormLabel>
-                <Select {...register("month")} id='month'>
-                    {months.map((month, index) => (
-                        <option key={index} value={month[0]}>
-                            {month[1]}
-                        </option>
-                    ))}
-                </Select>
-
-                <FormLabel htmlFor="gwp">GWP</FormLabel>
-                <InputNumber
-                    name="gwp"
-                    placeholder="0"
-                    control={control}
-                />
-                {errors.gwp && <div style={{color: 'red'}}>{errors.gwp.message}</div>}
-
-                <FormLabel htmlFor="name">Name</FormLabel>
-                <Input {...register("name")} id='name'/>
-                {errors.name && <div style={{color: 'red'}}>{errors.name.message}</div>}
-
-                <FormLabel htmlFor="description">Description</FormLabel>
-                <Textarea {...register("description")} id='description'/>
-                {errors.description && <div style={{color: 'red'}}>{errors.description.message}</div>}
-            </FormControl>
-            <Button variant='outline' onClick={() => reset()}>Reset</Button>
-            <Button
-                variant='solid'
-                disabled={isSubmitting}
-                isLoading={isSubmitting}
-                type='submit'
+        <FormProvider {...form}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                style={{
+                    minWidth: '780px',
+                    margin: '50px'
+                }}
             >
-                Submit
-            </Button>
-            {errors.root && <div style={{color: 'red'}}>{errors.root.message}</div>}
-        </form>
+                <FormControl isInvalid={!!errors.root}>
+                    <h1>Create Client</h1>
+                    <FormSelect<FormFields>
+                        fieldName='month' label='Month' options={months} id='month' errorMessage={errors.month?.message}
+                    />
+                    <FormDollarFormattedNumberInput<FormFields>
+                        fieldName='gwp' label='GWP' id='gwp' errorMessage={errors.gwp?.message} placeholder='0'
+                    />
+                    <FormInput<FormFields> fieldName='name' id='name' errorMessage={errors.name?.message} label='Name'/>
+                    <FormTextArea<FormFields>
+                        fieldName='description'
+                        label='Description'
+                        id='description'
+                        errorMessage={errors.description?.message}
+                    />
+                </FormControl>
+                <Button variant='outline' onClick={() => reset()}>Reset</Button>
+                <Button
+                    variant='solid'
+                    disabled={isSubmitting}
+                    isLoading={isSubmitting}
+                    type='submit'
+                >
+                    Submit
+                </Button>
+                {errors.root && <div style={{color: 'red'}}>{errors.root.message}</div>}
+            </form>
+        </FormProvider>
     )
 }
 
