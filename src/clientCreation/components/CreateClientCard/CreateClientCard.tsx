@@ -2,10 +2,9 @@ import { Button, FormControl } from "@chakra-ui/react";
 import {FormProvider, SubmitHandler, useForm} from "react-hook-form";
 import './CreateClientCard.css'
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormDollarFormattedNumberInput } from "../../../common/components/FormDollarFormattedNumberInput.tsx";
 import { FormFields, CreateClientSchema } from "../../schemas/createClientSchema";
 import { months } from "../../constants";
-import { FormSelect, FormInput, FormTextArea } from "../../../form/components";
+import { FormSelect, FormInput, FormTextArea, FormDollarFormattedNumberInput } from "../../../form/components";
 
 export const CreateClientCard = () => {
     const form = useForm<FormFields>({

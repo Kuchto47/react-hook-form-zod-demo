@@ -1,7 +1,7 @@
 import { FormLabel, Input, InputGroup, InputLeftAddon } from "@chakra-ui/react";
 import { Controller, useFormContext } from "react-hook-form";
 import { ChangeEvent } from "react";
-import { CommonFormProps } from "../../form/types.ts";
+import { CommonFormProps } from "../types.ts";
 
 type InputNumberProps<TFormValues extends Record<string, unknown>> = {
     placeholder?: string;
