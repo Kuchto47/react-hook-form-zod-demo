@@ -1,10 +1,19 @@
 import './CreateClientCard.css'
 import { FormFields, CreateClientSchema } from "../../schemas/createClientSchema";
 import { months } from "../../constants";
-import { FormSelect, FormInput, FormTextArea, FormDollarFormattedNumberInput } from "../../../form/components";
-import { Form } from "../../../form/components/Form.tsx";
+import { MyFormSelect, MyFormInput, MyFormTextArea, MyFormDollarFormattedNumberInput } from "../../../form/components";
+import { useMyForm } from "../../../form/hooks/useMyForm.ts";
+import { MyForm } from "../../../form/components/MyForm.tsx";
 
 export const CreateClientCard = () => {
+    const form = useMyForm<FormFields>({
+        defaultValues: {
+            description: "Default description, lets say DB-stored value",
+            month: '1'
+        },
+        schema: CreateClientSchema
+    });
+
     const onSubmit = async (values: FormFields): Promise<void> => {
         await new Promise((resolve) => setTimeout(resolve, 1500))
         //throw new Error(); // simulate error response from BE
@@ -12,22 +21,18 @@ export const CreateClientCard = () => {
     }
 
     return (
-        <Form
-            zodSchema={CreateClientSchema}
+        <MyForm<FormFields>
+            form={form}
             onSubmit={onSubmit}
-            defaultValues={{
-                description: "Default description, lets say DB-stored value",
-                month: '1'
-            }}
             submitText='Submit'
             cancelText='Reset'
         >
             <h1>Create Client</h1>
-            <FormSelect<FormFields> fieldName='month' label='Month' options={months} id='month' />
-            <FormDollarFormattedNumberInput<FormFields> fieldName='gwp' label='GWP' id='gwp' placeholder='0' />
-            <FormInput<FormFields> fieldName='name' id='name' label='Name'/>
-            <FormTextArea<FormFields> fieldName='description' label='Description' id='description' />
-        </Form>
+            <MyFormSelect<FormFields> fieldName='month' label='Month' options={months} id='month' />
+            <MyFormDollarFormattedNumberInput<FormFields> fieldName='gwp' label='GWP' id='gwp' placeholder='0' />
+            <MyFormInput<FormFields> fieldName='name' id='name' label='Name'/>
+            <MyFormTextArea<FormFields> fieldName='description' label='Description' id='description' />
+        </MyForm>
     )
 }
 

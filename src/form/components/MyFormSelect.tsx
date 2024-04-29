@@ -6,7 +6,7 @@ type Props<TFormValues> = {
     options: [string, string][];
 } & CommonFormProps<TFormValues>;
 
-export const FormSelect = <TFormValues extends Record<string, unknown>>(props: Props<TFormValues>) => {
+export const MyFormSelect = <TFormValues extends Record<string, unknown>>(props: Props<TFormValues>) => {
     const { register, formState: { errors }} = useFormContext<TFormValues>();
 
     return (
@@ -19,7 +19,7 @@ export const FormSelect = <TFormValues extends Record<string, unknown>>(props: P
                     </option>
                 ))}
             </Select>
-            {errors[props.fieldName] && <div style={{color: 'red'}}>{`${errors[props.fieldName]?.message}`}</div>}
+            {errors[props.fieldName] && <div style={{color: 'red'}}>{`${errors[props.fieldName]!.message}`}</div>}
         </>
     );
 }

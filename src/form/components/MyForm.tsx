@@ -1,8 +1,6 @@
 import { PropsWithChildren } from "react";
-import { DefaultValues, FieldValues, FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import {FieldValues, FormProvider, SubmitHandler, UseFormReturn} from "react-hook-form";
 import { Button, FormControl } from "@chakra-ui/react";
-import { ZodSchema } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 
 type FormButtons = {
     submitText?: string;
@@ -10,23 +8,19 @@ type FormButtons = {
     onCancelClick?: () => void;
 }
 
-type FormProps<TFormValues extends Record<string, unknown>> = {
+type FormProps<TFormValues extends FieldValues> = {
+    form: UseFormReturn<TFormValues>
     onSubmit: (values: TFormValues) => Promise<void>
-    defaultValues: DefaultValues<TFormValues>
-    zodSchema: ZodSchema<TFormValues>
 } & FormButtons
 
-export const Form = <TFormValues extends FieldValues>(props: PropsWithChildren<FormProps<TFormValues>>) => {
-    const form = useForm<TFormValues>({
-        defaultValues: {...props.defaultValues},
-        resolver: zodResolver(props.zodSchema)
-    });
+export const MyForm = <TFormValues extends FieldValues>(props: PropsWithChildren<FormProps<TFormValues>>) => {
     const {
         handleSubmit,
-        setError,
         reset,
-        formState: { errors, isSubmitting }
-    } = form;
+        setError,
+        formState: { errors , isSubmitting}
+    } = props.form;
+
     const onSubmit: SubmitHandler<TFormValues> = async (values: TFormValues): Promise<void> => {
         try {
             await props.onSubmit(values)
@@ -38,7 +32,7 @@ export const Form = <TFormValues extends FieldValues>(props: PropsWithChildren<F
     }
 
     return (
-        <FormProvider {...form}>
+        <FormProvider {...props.form}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 style={{
@@ -67,5 +61,5 @@ export const Form = <TFormValues extends FieldValues>(props: PropsWithChildren<F
                 {errors.root && <div style={{color: 'red'}}>{errors.root.message}</div>}
             </form>
         </FormProvider>
-);
+    );
 }
