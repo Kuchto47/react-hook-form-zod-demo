@@ -33,6 +33,7 @@ export const FormDollarFormattedNumberInput = <TFormValues extends Record<string
                     </InputGroup>
                 )}
             />
+            {props.errorMessage && <div style={{color: 'red'}}>{props.errorMessage}</div>}
         </>
     )
 }
